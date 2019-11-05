@@ -14,6 +14,13 @@ from nltk.tokenize import word_tokenize
 from gensim.models import Word2Vec
 import sys
 
+from collections import Counter 
+from nltk.corpus import stopwords
+import string
+from nltk.tokenize import RegexpTokenizer
+from nltk.tokenize import regexp_tokenize
+
+
 
 import matplotlib.pyplot as plt
 
@@ -30,34 +37,47 @@ class RNN:
         self.V = np.random.uniform(-np.sqrt(1./hidden_dim), np.sqrt(1./hidden_dim), (word_dim, hidden_dim))
         self.W = np.random.uniform(-np.sqrt(1./hidden_dim), np.sqrt(1./hidden_dim), (hidden_dim, hidden_dim))
     
-def importData(filename):
-    """ Load data and convert to sentences """
-    # load data
-    file = open(filename, 'rt')
-    text = file.read()
-    file.close()
+def tokenizeWords(text):
+    """ Takes in string of text and returns tokenized words """
     # split into words
-    tokens = word_tokenize(text)
+    tokens = regexp_tokenize(text, "[\w']+")
     # convert to lower case
     tokens = [w.lower() for w in tokens]
+    # filter out stop words
+    stop_words = set(stopwords.words('english'))
+    tokens = [w for w in tokens if not w in stop_words]
+    print(tokens[:100])
     # remove punctuation from each word
-    import string
     table = str.maketrans('', '', string.punctuation)
     stripped = [w.translate(table) for w in tokens]
     # remove remaining tokens that are not alphabetic
     words = [word for word in stripped if word.isalpha()]
-    # filter out stop words
-    from nltk.corpus import stopwords
-    stop_words = set(stopwords.words('english'))
-    words = [w for w in words if not w in stop_words]
     print(words[:100])
+    return words
+    
+def reduceVocab(listOfWords):
+    """ Take in array of all words and returns a list of top 8000 words """
+    counterWords = Counter(listOfWords)
+    most_occur = counterWords.most_common(80)
+    print(most_occur)
+        
     
 def wordToVec(sentences):
-    """ Convert word to vec embedding """
+    """ Create Word2Vec embedding based on sentences """
     pass
     
+def importData(filename):
+    """ Return the text from the file """
+    file = open(filename, 'rt')
+    text = file.read()
+    file.close()
+    return text
+
 def main():
-    importData("rnnDataset.csv")
+    text = importData("rnnDataset.csv")
+    tokenizedWords = tokenizeWords(text)
+    reduceVocab(tokenizedWords)
+    
     vocabulary_size = 8000
     unknown_token = "UNK"
     sentence_start_token = "START"
