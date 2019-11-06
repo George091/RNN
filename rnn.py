@@ -8,17 +8,11 @@ Created on Tue Nov  5 09:12:30 2019
 
 import csv
 import numpy as np
-import nltk
-from nltk import sent_tokenize
+
 from nltk.tokenize import word_tokenize
 from gensim.models import Word2Vec
-import sys
-
-import re
-import string
 from collections import Counter 
 from nltk.corpus import stopwords
-from nltk.tokenize import WhitespaceTokenizer
 
 
 class RNN:
@@ -34,49 +28,40 @@ class RNN:
         self.W = np.random.uniform(-np.sqrt(1./hidden_dim), np.sqrt(1./hidden_dim), (hidden_dim, hidden_dim))
     
 def wordToVec(sentences):
-    """ Given sentences as an array returns a Word2Vec model """
-    model = Word2Vec(sentences, min_count=1, iter = 5)
-    words = list(model.wv.vocab)
-#    print(words)
-    print(model['START'])
-#    print(model)
-    return words
+    """ Given an array of tokenized words returns a Word2Vec model """
+    model = Word2Vec(sentences, size = 10, min_count=1, iter = 5)
+    return model
 
-def tokenizeSentences(text, vocabulary):
-    """ Takes in a string of text and vocabulary and returns tokenized sentences """
-    tokens = sent_tokenize(text)
+def tokenizeLines(arrayOfLines):
+    """ Takes in a array of lines of text and returns tokenized lines """
     i = 0
-    for sentence in tokens:
-        tokens[i] = tokenizeWords(sentence)
-        w = 0
-        for word in tokens[i]:
-            if word not in vocabulary:
-                tokens[i][w] = "UNK"
-            w += 1
-        tokens[i].insert(0,"START")
-        tokens[i].append("END")
+    for line in arrayOfLines:
+        arrayOfLines[i] = tokenizeText(line[0])
         i += 1
-    return tokens
+    flattened  = [val for sublist in arrayOfLines for val in sublist]
+    vocabulary = findVocab(flattened)
+    l = 0
+    for line in arrayOfLines:
+        w = 0
+        for word in line:
+            if word not in vocabulary:
+                arrayOfLines[l][w] = "UNK"
+            w += 1
+        arrayOfLines[l].insert(0,"START")
+        arrayOfLines[l].append("END")
+        l += 1
+    return arrayOfLines
 
-def tokenizeWords(text):
+def tokenizeText(text):
     """ Takes in a string of text and returns an array of tokenized words """
-    # replace periods with a space
-    text=re.sub("[.]", " ", text)
-    # remove punctuation except apostrophe
-    text = re.sub("[^\w\d'\s]+",'',text)
     # tokenize words based on seperating whitespace
-    tokens = WhitespaceTokenizer().tokenize(text)
+    tokens = word_tokenize(text)
     # lowercase all words
     tokens = [token.lower() for token in tokens]
     # remove stop words
     stopWords = set(stopwords.words('english'))
     tokens = [word for word in tokens if not word in stopWords]
-    # remove remaining apostrophes
-    table = str.maketrans('', '', string.punctuation)
-    stripped = [word.translate(table) for word in tokens]
-    # remove non-alphabetic tokens
-    words = [word for word in stripped if word.isalpha()]
-    return words
+    return tokens
     
 def findVocab(listOfWords):
     """ Take in a tokenized array of words and returns a list of top 8000 words """
@@ -85,14 +70,15 @@ def findVocab(listOfWords):
     vocab = []
     for position in most_occur:
         vocab.append(position[0])
-#    print(most_occur)
     return vocab
     
 def importData(filename):
-    """ Return the text from the file """
-    file = open(filename, 'rt')
-    text = file.read()
-    file.close()
+    """ Return the text from the file where each line is an element in an array """
+    f = open(filename)
+    csv_f = csv.reader(f)
+    text = []
+    for row in csv_f:
+        text.append(row)
     return text
 
 def main():
@@ -101,13 +87,16 @@ def main():
 #    sentence_start_token = "START"
 #    sentence_end_token = "END"
     text = importData("rnnDataset.csv")
-    tokenizedWords = tokenizeWords(text)
-    vocabulary = findVocab(tokenizedWords)
-    tokenizedSentences = tokenizeSentences(text, vocabulary)
-    embedding = wordToVec(tokenizedSentences)
-#    print(len(vocabulary))
-#    print(tokenizedSentences[:100])
-#    print(set(embedding) ^ set(vocabulary))
+    tokenizedTextLines = tokenizeLines(text)
+    model = wordToVec(tokenizedTextLines)    
+    # Print first 10 tokenized words and vectorized 10 tokenized words
+    for line in tokenizedTextLines[:10]:
+        print(line)
+        for word in line:
+            print(word)
+            print(model.wv.__getitem__(word))
+    print(model)
+
 
 if __name__ == "__main__":
     main()
