@@ -40,7 +40,20 @@ class RNN:
     
 def wordToVec(sentences):
     """ Create Word2Vec embedding based on sentences """
-    pass
+    # train model
+    model = Word2Vec(sentences, min_count=1)
+    # summarize the loaded model
+    print(model)
+    # summarize vocabulary
+    words = list(model.wv.vocab)
+    print(words)
+    # access vector for one word
+    print(model['sentence'])
+    # save model
+    model.save('model.bin')
+    # load model
+    new_model = Word2Vec.load('model.bin')
+    print(new_model)
 
 def tokenizeSentences(text, vocabulary):
     """ Takes in a string of text and vocabulary and returns tokenized sentences """
@@ -101,8 +114,8 @@ def main():
     tokenizedWords = tokenizeWords(text)
     vocabulary = findVocab(tokenizedWords)
     tokenizedSentences = tokenizeSentences(text, vocabulary)
-    print(tokenizedSentences[:100])
-    
+#    print(tokenizedSentences[:100])
+    wordToVec(tokenizedSentences)
 
 if __name__ == "__main__":
     main()
