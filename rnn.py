@@ -91,10 +91,12 @@ def main():
     model = wordToVec(tokenizedTextLines)    
     # Print first 10 tokenized words and vectorized 10 tokenized words
     for line in tokenizedTextLines[:10]:
+        print()
         print(line)
         for word in line:
             print(word)
             print(model.wv.__getitem__(word))
+    print()
     print(model)
 
 
