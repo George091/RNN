@@ -38,12 +38,28 @@ class RNN:
         self.V = np.random.uniform(-np.sqrt(1./hidden_dim), np.sqrt(1./hidden_dim), (word_dim, hidden_dim))
         self.W = np.random.uniform(-np.sqrt(1./hidden_dim), np.sqrt(1./hidden_dim), (hidden_dim, hidden_dim))
     
-def tokenizeSentences(text):
-    """ Takes in a string of text and returns tokenized sentences """
+def wordToVec(sentences):
+    """ Create Word2Vec embedding based on sentences """
     pass
 
+def tokenizeSentences(text, vocabulary):
+    """ Takes in a string of text and vocabulary and returns tokenized sentences """
+    tokens = sent_tokenize(text)
+    i = 0
+    for sentence in tokens:
+        tokens[i] = tokenizeWords(sentence)
+        for word in tokens[i]:
+            w = 0
+            if word not in vocabulary:
+                tokens[i][w] = "UNK"
+                w += 1
+        tokens[i].insert(0,"START")
+        tokens[i].append("END")
+        i += 1
+    return tokens
+
 def tokenizeWords(text):
-    """ Takes in a string of text and returns an array of words """
+    """ Takes in a string of text and returns an array of tokenized words """
     # removes all punctuation except apostrophe
     text = re.sub("[^\w\d'\s]+",'',text)
     # split into words based on whitespace
@@ -60,15 +76,14 @@ def tokenizeWords(text):
     words = [word for word in stripped if word.isalpha()]
     return words
     
-def reduceVocab(listOfWords):
-    """ Take in array of all words and returns a list of top 8000 words """
+def findVocab(listOfWords):
+    """ Take in a tokenized array of words and returns a list of top 8000 words """
     counterWords = Counter(listOfWords)
     most_occur = counterWords.most_common(8000)
-    print(most_occur)
-    
-def wordToVec(sentences):
-    """ Create Word2Vec embedding based on sentences """
-    pass
+    vocab = []
+    for position in most_occur:
+        vocab.append(position[0])
+    return vocab
     
 def importData(filename):
     """ Return the text from the file """
@@ -78,15 +93,15 @@ def importData(filename):
     return text
 
 def main():
+#    vocabulary_size = 8000
+#    unknown_token = "UNK"
+#    sentence_start_token = "START"
+#    sentence_end_token = "END"
     text = importData("rnnDataset.csv")
-    tokenizedSentences = tokenizeSentences(text)
     tokenizedWords = tokenizeWords(text)
-    reduceVocab(tokenizedWords)
-    
-    vocabulary_size = 8000
-    unknown_token = "UNK"
-    sentence_start_token = "START"
-    sentence_end_token = "END"
+    vocabulary = findVocab(tokenizedWords)
+    tokenizedSentences = tokenizeSentences(text, vocabulary)
+    print(tokenizedSentences[:100])
     
 
 if __name__ == "__main__":
