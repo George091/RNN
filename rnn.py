@@ -15,15 +15,10 @@ from gensim.models import Word2Vec
 import sys
 
 import re
+import string
 from collections import Counter 
 from nltk.corpus import stopwords
-import string
-from nltk.tokenize import RegexpTokenizer
-from nltk.tokenize import regexp_tokenize
 from nltk.tokenize import WhitespaceTokenizer
-
-
-import matplotlib.pyplot as plt
 
 
 class RNN:
@@ -40,13 +35,11 @@ class RNN:
     
 def wordToVec(sentences):
     """ Given sentences as an array returns a Word2Vec model """
-    # train model
     model = Word2Vec(sentences, min_count=1, iter = 5)
-    # show vocab
     words = list(model.wv.vocab)
-    print(words)
-    print(model['sentence'])
-    print(model)
+#    print(words)
+    print(model['START'])
+#    print(model)
     return words
 
 def tokenizeSentences(text, vocabulary):
@@ -67,21 +60,21 @@ def tokenizeSentences(text, vocabulary):
 
 def tokenizeWords(text):
     """ Takes in a string of text and returns an array of tokenized words """
-    # replace all periods with a space
+    # replace periods with a space
     text=re.sub("[.]", " ", text)
-    # removes all punctuation except apostrophe
+    # remove punctuation except apostrophe
     text = re.sub("[^\w\d'\s]+",'',text)
-    # split into words based on whitespace
+    # tokenize words based on seperating whitespace
     tokens = WhitespaceTokenizer().tokenize(text)
-    # convert to lower case
-    tokens = [w.lower() for w in tokens]
-    # filter out stop words
-    stop_words = set(stopwords.words('english'))
-    tokens = [w for w in tokens if not w in stop_words]
-    # remove punctuation from each word
+    # lowercase all words
+    tokens = [token.lower() for token in tokens]
+    # remove stop words
+    stopWords = set(stopwords.words('english'))
+    tokens = [word for word in tokens if not word in stopWords]
+    # remove remaining apostrophes
     table = str.maketrans('', '', string.punctuation)
-    stripped = [w.translate(table) for w in tokens]
-    # remove remaining tokens that are not alphabetic
+    stripped = [word.translate(table) for word in tokens]
+    # remove non-alphabetic tokens
     words = [word for word in stripped if word.isalpha()]
     return words
     
@@ -92,6 +85,7 @@ def findVocab(listOfWords):
     vocab = []
     for position in most_occur:
         vocab.append(position[0])
+#    print(most_occur)
     return vocab
     
 def importData(filename):
@@ -106,15 +100,14 @@ def main():
 #    unknown_token = "UNK"
 #    sentence_start_token = "START"
 #    sentence_end_token = "END"
-    
     text = importData("rnnDataset.csv")
     tokenizedWords = tokenizeWords(text)
     vocabulary = findVocab(tokenizedWords)
-    print(len(vocabulary))
     tokenizedSentences = tokenizeSentences(text, vocabulary)
-    print(tokenizedSentences[:100])
     embedding = wordToVec(tokenizedSentences)
-    print(set(embedding) ^ set(vocabulary))
+#    print(len(vocabulary))
+#    print(tokenizedSentences[:100])
+#    print(set(embedding) ^ set(vocabulary))
 
 if __name__ == "__main__":
     main()
