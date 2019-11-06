@@ -39,7 +39,7 @@ class RNN:
         self.W = np.random.uniform(-np.sqrt(1./hidden_dim), np.sqrt(1./hidden_dim), (hidden_dim, hidden_dim))
     
 def wordToVec(sentences):
-    """ Create Word2Vec embedding based on sentences """
+    """ Given sentences as an array returns a Word2Vec model """
     # train model
     model = Word2Vec(sentences, min_count=1)
     # summarize the loaded model
@@ -54,6 +54,7 @@ def wordToVec(sentences):
     # load model
     new_model = Word2Vec.load('model.bin')
     print(new_model)
+    return new_model
 
 def tokenizeSentences(text, vocabulary):
     """ Takes in a string of text and vocabulary and returns tokenized sentences """
@@ -116,8 +117,8 @@ def main():
     vocabulary = findVocab(tokenizedWords)
 #    print(len(vocabulary))
     tokenizedSentences = tokenizeSentences(text, vocabulary)
-    print(tokenizedSentences[:100])
-#    wordToVec(tokenizedSentences)
+#    print(tokenizedSentences[:100])
+    wordToVec(tokenizedSentences)
 
 if __name__ == "__main__":
     main()
