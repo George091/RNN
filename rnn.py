@@ -41,20 +41,13 @@ class RNN:
 def wordToVec(sentences):
     """ Given sentences as an array returns a Word2Vec model """
     # train model
-    model = Word2Vec(sentences, min_count=1)
-    # summarize the loaded model
-    print(model)
-    # summarize vocabulary
+    model = Word2Vec(sentences, min_count=1, iter = 5)
+    # show vocab
     words = list(model.wv.vocab)
     print(words)
-    # access vector for one word
     print(model['sentence'])
-    # save model
-    model.save('model.bin')
-    # load model
-    new_model = Word2Vec.load('model.bin')
-    print(new_model)
-    return new_model
+    print(model)
+    return words
 
 def tokenizeSentences(text, vocabulary):
     """ Takes in a string of text and vocabulary and returns tokenized sentences """
@@ -74,6 +67,8 @@ def tokenizeSentences(text, vocabulary):
 
 def tokenizeWords(text):
     """ Takes in a string of text and returns an array of tokenized words """
+    # replace all periods with a space
+    text=re.sub("[.]", " ", text)
     # removes all punctuation except apostrophe
     text = re.sub("[^\w\d'\s]+",'',text)
     # split into words based on whitespace
@@ -115,10 +110,11 @@ def main():
     text = importData("rnnDataset.csv")
     tokenizedWords = tokenizeWords(text)
     vocabulary = findVocab(tokenizedWords)
-#    print(len(vocabulary))
+    print(len(vocabulary))
     tokenizedSentences = tokenizeSentences(text, vocabulary)
-#    print(tokenizedSentences[:100])
-    wordToVec(tokenizedSentences)
+    print(tokenizedSentences[:100])
+    embedding = wordToVec(tokenizedSentences)
+    print(set(embedding) ^ set(vocabulary))
 
 if __name__ == "__main__":
     main()
