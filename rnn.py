@@ -61,11 +61,11 @@ def tokenizeSentences(text, vocabulary):
     i = 0
     for sentence in tokens:
         tokens[i] = tokenizeWords(sentence)
+        w = 0
         for word in tokens[i]:
-            w = 0
             if word not in vocabulary:
                 tokens[i][w] = "UNK"
-                w += 1
+            w += 1
         tokens[i].insert(0,"START")
         tokens[i].append("END")
         i += 1
@@ -110,12 +110,14 @@ def main():
 #    unknown_token = "UNK"
 #    sentence_start_token = "START"
 #    sentence_end_token = "END"
+    
     text = importData("rnnDataset.csv")
     tokenizedWords = tokenizeWords(text)
     vocabulary = findVocab(tokenizedWords)
+#    print(len(vocabulary))
     tokenizedSentences = tokenizeSentences(text, vocabulary)
-#    print(tokenizedSentences[:100])
-    wordToVec(tokenizedSentences)
+    print(tokenizedSentences[:100])
+#    wordToVec(tokenizedSentences)
 
 if __name__ == "__main__":
     main()
