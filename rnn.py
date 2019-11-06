@@ -14,12 +14,13 @@ from nltk.tokenize import word_tokenize
 from gensim.models import Word2Vec
 import sys
 
+import re
 from collections import Counter 
 from nltk.corpus import stopwords
 import string
 from nltk.tokenize import RegexpTokenizer
 from nltk.tokenize import regexp_tokenize
-
+from nltk.tokenize import WhitespaceTokenizer
 
 
 import matplotlib.pyplot as plt
@@ -37,30 +38,33 @@ class RNN:
         self.V = np.random.uniform(-np.sqrt(1./hidden_dim), np.sqrt(1./hidden_dim), (word_dim, hidden_dim))
         self.W = np.random.uniform(-np.sqrt(1./hidden_dim), np.sqrt(1./hidden_dim), (hidden_dim, hidden_dim))
     
+def tokenizeSentences(text):
+    """ Takes in a string of text and returns tokenized sentences """
+    pass
+
 def tokenizeWords(text):
-    """ Takes in string of text and returns tokenized words """
-    # split into words
-    tokens = regexp_tokenize(text, "[\w']+")
+    """ Takes in a string of text and returns an array of words """
+    # removes all punctuation except apostrophe
+    text = re.sub("[^\w\d'\s]+",'',text)
+    # split into words based on whitespace
+    tokens = WhitespaceTokenizer().tokenize(text)
     # convert to lower case
     tokens = [w.lower() for w in tokens]
     # filter out stop words
     stop_words = set(stopwords.words('english'))
     tokens = [w for w in tokens if not w in stop_words]
-    print(tokens[:100])
     # remove punctuation from each word
     table = str.maketrans('', '', string.punctuation)
     stripped = [w.translate(table) for w in tokens]
     # remove remaining tokens that are not alphabetic
     words = [word for word in stripped if word.isalpha()]
-    print(words[:100])
     return words
     
 def reduceVocab(listOfWords):
     """ Take in array of all words and returns a list of top 8000 words """
     counterWords = Counter(listOfWords)
-    most_occur = counterWords.most_common(80)
+    most_occur = counterWords.most_common(8000)
     print(most_occur)
-        
     
 def wordToVec(sentences):
     """ Create Word2Vec embedding based on sentences """
@@ -75,6 +79,7 @@ def importData(filename):
 
 def main():
     text = importData("rnnDataset.csv")
+    tokenizedSentences = tokenizeSentences(text)
     tokenizedWords = tokenizeWords(text)
     reduceVocab(tokenizedWords)
     
