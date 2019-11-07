@@ -1,5 +1,5 @@
 # RNN
-
+"On my honor, I have neither given nor received any unacknowledged aid on this assignment."
 ## GENERAL OVERVIEW 
 
 This is the readme for the "RNN.py" file, created by George Barker and Andre Zeromski for CSCI315 Artificial Intelligence with Professor Cody Watson. 
@@ -17,6 +17,9 @@ Next, the model calls tokenizeLines, which accepts rows of text (arrayOfLines) a
 Once each row in tokenizeLine's arrayOfLines has been normalized in this way and returned as a 2D vector (1 column by the number of rows of text from the input file), tokenizeLines proceeds to flatten this vector and calls findVocab. findVocab is a method that takes this tokenized flattened vector and returns the 8000 most frequently occurring words. These 8000 words are then used as our new vocabulary; we want to limit our vocabulary for two reasons. The first is that, according to Zipf's law, we can limit our vocabulary in this way and still retain the same or similar meaning in each sentence. The second reason is if our model's prediction of words is based on the probability of each word occurring next, then a large vocabulary will cause these probabilities to be very small, and thus it is difficult to determine a useful understanding of an output probability. Once  the newly developed vocabulary is created, the model proceeds to take the unflattened arrayOfLines and replaces the words not in the vocabulary with an 'UNK' token.
 
 Each row in arrayOfLines is then manipulated by adding a 'START' and 'END' token to the beginning and end of each line. We do this because it signals to the encoder--decoder structure of the embedding model when to begin encoding and when to terminate to create the final embedding of the given input sequence. Finally, the model calls wordToVec, which creates a Word2Vec model that is saved after training on these tokenized rows of sentences from arrayOfLines. The Word2Vec model contains a total of 8003 words in its vocabulary (8000 most frequent words, "UNK", "START", and "END") and is what is used to embed our tokenized sentences with numerical meaning.
+
+### How to run the code
+This file can be run in the terminal by opening rnn.py and pressing F5. The outputs of this file are print statements of the tokenized first 10 lines of the .csv with the updated vocabulary. Each tokenized word of the first 10 lines are accompanied by their respective embedded vector with a size of 10. We set the dimensionality of the embedded vectors to 10 because it seemed like a value that would capture the features of each tokenized word without being too large so as to add features where none exist.
 
 ### Sources
 https://machinelearningmastery.com/clean-text-machine-learning-python/ <br /> 
