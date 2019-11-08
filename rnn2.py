@@ -5,7 +5,7 @@ Created on Tue Nov  5 09:12:30 2019
 @author: George Barker and Andre Zeromski
 @author: watso
 """
-
+import pickle
 import csv
 import numpy as np
 
@@ -17,7 +17,7 @@ from collections import Counter
 
 class RNN:
     
-    def __init__(self, word_dim = 10, hidden_dim, bptt_truncate=4):
+    def __init__(self, hidden_dim, word_dim = 10, bptt_truncate=4):
         # Assign instance variables
         self.word_dim = word_dim
         self.hidden_dim = hidden_dim
@@ -27,41 +27,46 @@ class RNN:
         self.V = np.random.uniform(-np.sqrt(1./hidden_dim), np.sqrt(1./hidden_dim), (word_dim, hidden_dim))
         self.W = np.random.uniform(-np.sqrt(1./hidden_dim), np.sqrt(1./hidden_dim), (hidden_dim, hidden_dim))
     
-##    def feedForward(self, embedding):
-##        # Fill the input vector
-##        prev_hidden = np.zeros(hidden_dim)
-##        for word in embedding:
-##            
-##        self.inputNodes = model[i]
-##        # Hidden nodes 1 (unsquashed and squashed)
-##        self.hiddenNodes1 = np.dot(self.U, self.inputNodes)
-##        self.aHiddenNodes1 = self.sigmoid(self.hiddenNodes1)
-##        # Hidden nodes 2 (unsquashed and squashed)
-##        self.hiddenNodes2 = np.dot(self.weights23, self.aHiddenNodes1)
-##        self.aHiddenNodes2 = self.sigmoid(self.hiddenNodes2)
-##        # Output nodes (unsquashed and squashed)
-##        self.outputNodes = np.dot(self.weights34, self.aHiddenNodes2)
-##        self.aOutputNodes = self.sigmoid(self.outputNodes)
+    def feedForward(self, line):
+        # Fill the input vector
+        hp = np.zeros(self.hidden_dim)
+        to = []
+        for word in line:
+            inputNodes = np.asarray(word)
+            hi = np.dot(self.U, inputNodes.transpose())
+            hp = np.dot(self.W, hp)
+            hiddenSummation = hi + hp
+            ht = np.tanh(hiddenSummation)
+            yt = np.dot(self.V,ht)
+            to.append(yt)
+        return to
+        
 
-class embedding:
+class VectorizeData:
     
-    def __init__(self):
+    def __init__(self, data):
         """ Given an array of tokenized words returns a Word2Vec model """
-        self.model = Word2Vec(tokenizeData().getSentences(), size = 10, min_count=1, iter = 5)
+        self.model = Word2Vec(data, size = 10, min_count=1, iter = 5)
 
     def getNumericFromWord(self, word):
+        """ Changes one word token to a vector """
         return self.model.wv.__getitem__(word)
-
-class tokenizeData:
     
+    def getNumericFromLine(self, line):
+        """ Changes one line of word tokens to a vector of vectors """
+        numericSentence = []
+        for word in line:
+            numericSentence.append(self.getNumericFromWord(word))
+        return numericSentence
+    
+class TokenizeData:
     def __init__(self, filename = "rnnDataset.csv"):
         self.filename = filename
-        self.sentences = self.tokenizeLines(self.importData(self.filename))
-        # Data cleaning parameters
         self.unknown_token = "UNK"
         self.sentence_start_token = "START"
         self.sentence_end_token = "END"
         self.vocabulary_size = 8000
+        self.sentences = self.tokenizeLines(self.importData(self.filename))
 
     def getSentences(self):
         return self.sentences
@@ -115,8 +120,73 @@ class tokenizeData:
             text.append(row)
         return text
 
-def main():
-    data = tokenizeData().getSentences()
+def main():        
+#    data = TokenizeData().getSentences()
+#    pickle_out = open("data","wb")
+#    pickle.dump(data, pickle_out)
+#    pickle_out.close()
+#        
+#    vdModel = VectorizeData(data)
+#    pickle_out = open("vdModel","wb")
+#    pickle.dump(vdModel, pickle_out)
+#    pickle_out.close()
+    
+#    # Load the Data
+#    pickle_in = open("data","rb")
+#    data = pickle.load(pickle_in)
+#        
+#    # Load the vdModel
+#    pickle_in = open("vdModel","rb")
+#    vdModel = pickle.load(pickle_in)
+    
+#    x_train = []
+#    y_train = []
+#    
+#    dataVector = []
+#    for line in data:
+#        vectorLine = vdModel.getNumericFromLine(line)
+#        dataVector.append(vectorLine)        
+#        vectorLine.pop(0)
+#        vectorLine.pop()
+#        vectorLineCopy = vectorLine.copy()
+#        vectorLineCopy.pop()
+#        x_train.append(vectorLineCopy)
+#        vectorLine.pop(0)
+#        y_train.append(vectorLine)
+#    
+#    pickle_out = open("x_train","wb")
+#    pickle.dump(x_train, pickle_out)
+#    pickle_out.close()
+#    pickle_out = open("y_train","wb")
+#    pickle.dump(y_train, pickle_out)
+#    pickle_out.close()
+
+#    # Load x_train
+#    pickle_in = open("x_train","rb")
+#    x_train = pickle.load(pickle_in)
+#
+#    # Load y_train
+#    pickle_in = open("y_train","rb")
+#    y_train = pickle.load(pickle_in)
+#    
+#    pickle_out = open("x_trainShort","wb")
+#    pickle.dump(x_train[:10], pickle_out)
+#    pickle_out.close()
+#    pickle_out = open("y_trainShort","wb")
+#    pickle.dump(y_train[:10], pickle_out)
+#    pickle_out.close()
+    
+    # Load x_train
+    pickle_in = open("x_trainShort","rb")
+    x_train = pickle.load(pickle_in)
+
+#    # Load y_train
+#    pickle_in = open("y_trainShort","rb")
+#    y_train = pickle.load(pickle_in)
+    
+    ourRNN = RNN(7)
+    result = ourRNN.feedForward(x_train[1])
+    print(len(result))
     
 
 if __name__ == "__main__":
