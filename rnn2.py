@@ -17,14 +17,17 @@ from collections import Counter
 
 class RNN:
     
-    def __init__(self, hidden_dim, word_dim = 10, bptt_truncate=4):
+    def __init__(self, wordToVecModel, hidden_dim, word_dim = 10, output_dim = 8003, bptt_truncate=4):
         # Assign instance variables
         self.word_dim = word_dim
         self.hidden_dim = hidden_dim
         self.bptt_truncate = bptt_truncate
+        self.wordToVecModel = wordToVecModel
+        self.vocabulary = list(wordToVecModel.model.wv.vocab.keys())
+        self.vectorVocabulary = [self.wordToVecModel.model.wv.__getitem__(word) for word in self.vocabulary]
         # Randomly initialize the network parameters
         self.U = np.random.uniform(-np.sqrt(1./word_dim), np.sqrt(1./word_dim), (hidden_dim, word_dim))
-        self.V = np.random.uniform(-np.sqrt(1./hidden_dim), np.sqrt(1./hidden_dim), (word_dim, hidden_dim))
+        self.V = np.random.uniform(-np.sqrt(1./hidden_dim), np.sqrt(1./hidden_dim), (output_dim, hidden_dim))
         self.W = np.random.uniform(-np.sqrt(1./hidden_dim), np.sqrt(1./hidden_dim), (hidden_dim, hidden_dim))
     
     def feedForward(self, line):
@@ -34,16 +37,21 @@ class RNN:
         for word in line:
             inputNodes = np.asarray(word)
             hi = np.dot(self.U, inputNodes.transpose())
-            hp = np.dot(self.W, hp)
+            hp = np.dot(self.W, hp.transpose())
             hiddenSummation = hi + hp
             ht = np.tanh(hiddenSummation)
-            yt = np.dot(self.V,ht)
-            to.append(yt)
+            yt = softmax(np.dot(self.V,ht))
+            vectorWordIndex = np.argmax(yt)
+            to.append(self.vectorVocabulary[vectorWordIndex])
+            print(self.vocabulary[vectorWordIndex])
         return to
+
+def softmax(X):
+    exps = np.exp(X)
+    return exps / np.sum(exps)
         
 
 class VectorizeData:
-    
     def __init__(self, data):
         """ Given an array of tokenized words returns a Word2Vec model """
         self.model = Word2Vec(data, size = 10, min_count=1, iter = 5)
@@ -136,8 +144,8 @@ def main():
 #    data = pickle.load(pickle_in)
 #        
 #    # Load the vdModel
-#    pickle_in = open("vdModel","rb")
-#    vdModel = pickle.load(pickle_in)
+    pickle_in = open("vdModel","rb")
+    vdModel = pickle.load(pickle_in)
     
 #    x_train = []
 #    y_train = []
@@ -180,13 +188,13 @@ def main():
     pickle_in = open("x_trainShort","rb")
     x_train = pickle.load(pickle_in)
 
-#    # Load y_train
+    # Load y_train
 #    pickle_in = open("y_trainShort","rb")
 #    y_train = pickle.load(pickle_in)
     
-    ourRNN = RNN(7)
+    ourRNN = RNN(vdModel,100)
     result = ourRNN.feedForward(x_train[1])
-    print(len(result))
+    print(result)
     
 
 if __name__ == "__main__":
