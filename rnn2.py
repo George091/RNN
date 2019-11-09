@@ -12,24 +12,26 @@ import numpy as np
 from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize
 from gensim.models import Word2Vec
-from collections import Counter 
+from collections import Counter
 
 
 class RNN:
-    
-    def __init__(self, wordToVecModel, hidden_dim, word_dim = 10, output_dim = 8003, bptt_truncate=4):
+
+    def __init__(self, Word2VecModel, hidden_dim = 100, bptt_truncate=4):
+        # Assign vocabulary parameters
+        self.Word2VecModel = Word2VecModel
+        self.vocabulary = list(Word2VecModel.wv.vocab.keys())
+        self.vectorVocabulary = [self.Word2VecModel.wv.__getitem__(word) for word in self.vocabulary]
         # Assign instance variables
-        self.word_dim = word_dim
+        self.word_dim = Word2VecModel.vector_size
+        self.output_dim = len(Word2VecModel.wv.vocab)
         self.hidden_dim = hidden_dim
         self.bptt_truncate = bptt_truncate
-        self.wordToVecModel = wordToVecModel
-        self.vocabulary = list(wordToVecModel.model.wv.vocab.keys())
-        self.vectorVocabulary = [self.wordToVecModel.model.wv.__getitem__(word) for word in self.vocabulary]
         # Randomly initialize the network parameters
-        self.U = np.random.uniform(-np.sqrt(1./word_dim), np.sqrt(1./word_dim), (hidden_dim, word_dim))
-        self.V = np.random.uniform(-np.sqrt(1./hidden_dim), np.sqrt(1./hidden_dim), (output_dim, hidden_dim))
+        self.U = np.random.uniform(-np.sqrt(1./self.word_dim), np.sqrt(1./self.word_dim), (hidden_dim, self.word_dim))
+        self.V = np.random.uniform(-np.sqrt(1./hidden_dim), np.sqrt(1./hidden_dim), (self.output_dim, hidden_dim))
         self.W = np.random.uniform(-np.sqrt(1./hidden_dim), np.sqrt(1./hidden_dim), (hidden_dim, hidden_dim))
-    
+
     def feedForward(self, line):
         # Fill the input vector
         hp = np.zeros(self.hidden_dim)
@@ -49,7 +51,7 @@ class RNN:
 def softmax(X):
     exps = np.exp(X)
     return exps / np.sum(exps)
-        
+
 
 class VectorizeData:
     def __init__(self, data):
@@ -59,14 +61,14 @@ class VectorizeData:
     def getNumericFromWord(self, word):
         """ Changes one word token to a vector """
         return self.model.wv.__getitem__(word)
-    
+
     def getNumericFromLine(self, line):
         """ Changes one line of word tokens to a vector of vectors """
         numericSentence = []
         for word in line:
             numericSentence.append(self.getNumericFromWord(word))
         return numericSentence
-    
+
 class TokenizeData:
     def __init__(self, filename = "rnnDataset.csv"):
         self.filename = filename
@@ -78,7 +80,7 @@ class TokenizeData:
 
     def getSentences(self):
         return self.sentences
-    
+
     def tokenizeLines(self, arrayOfLines):
         """ Takes in a array of lines of text and returns tokenized lines """
         i = 0
@@ -109,7 +111,7 @@ class TokenizeData:
         stopWords = set(stopwords.words('english'))
         tokens = [word for word in tokens if not word in stopWords]
         return tokens
-        
+
     def findVocab(self, listOfWords):
         """ Take in a tokenized array of words and returns a list of top 8000 words """
         counterWords = Counter(listOfWords)
@@ -118,7 +120,7 @@ class TokenizeData:
         for position in most_occur:
             vocab.append(position[0])
         return vocab
-        
+
     def importData(self, filename):
         """ Return the text from the file where each line is an element in an array """
         f = open(filename)
@@ -128,32 +130,32 @@ class TokenizeData:
             text.append(row)
         return text
 
-def main():        
+def main():
 #    data = TokenizeData().getSentences()
 #    pickle_out = open("data","wb")
 #    pickle.dump(data, pickle_out)
 #    pickle_out.close()
-#        
+#
 #    vdModel = VectorizeData(data)
 #    pickle_out = open("vdModel","wb")
 #    pickle.dump(vdModel, pickle_out)
 #    pickle_out.close()
-    
+
 #    # Load the Data
 #    pickle_in = open("data","rb")
 #    data = pickle.load(pickle_in)
-#        
+#
 #    # Load the vdModel
     pickle_in = open("vdModel","rb")
     vdModel = pickle.load(pickle_in)
-    
+
 #    x_train = []
 #    y_train = []
-#    
+#
 #    dataVector = []
 #    for line in data:
 #        vectorLine = vdModel.getNumericFromLine(line)
-#        dataVector.append(vectorLine)        
+#        dataVector.append(vectorLine)
 #        vectorLine.pop(0)
 #        vectorLine.pop()
 #        vectorLineCopy = vectorLine.copy()
@@ -161,7 +163,7 @@ def main():
 #        x_train.append(vectorLineCopy)
 #        vectorLine.pop(0)
 #        y_train.append(vectorLine)
-#    
+#
 #    pickle_out = open("x_train","wb")
 #    pickle.dump(x_train, pickle_out)
 #    pickle_out.close()
@@ -176,14 +178,14 @@ def main():
 #    # Load y_train
 #    pickle_in = open("y_train","rb")
 #    y_train = pickle.load(pickle_in)
-#    
+#
 #    pickle_out = open("x_trainShort","wb")
 #    pickle.dump(x_train[:10], pickle_out)
 #    pickle_out.close()
 #    pickle_out = open("y_trainShort","wb")
 #    pickle.dump(y_train[:10], pickle_out)
 #    pickle_out.close()
-    
+
     # Load x_train
     pickle_in = open("x_trainShort","rb")
     x_train = pickle.load(pickle_in)
@@ -191,11 +193,11 @@ def main():
     # Load y_train
 #    pickle_in = open("y_trainShort","rb")
 #    y_train = pickle.load(pickle_in)
-    
-    ourRNN = RNN(vdModel,100)
+
+    ourRNN = RNN(vdModel.model)
     result = ourRNN.feedForward(x_train[1])
     print(result)
-    
+
 
 if __name__ == "__main__":
     main()
