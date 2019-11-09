@@ -1,4 +1,4 @@
-# RNN
+# Recurrent Neural Network (RNN)
 
 ## GENERAL OVERVIEW 
 
