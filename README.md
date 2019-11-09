@@ -1,12 +1,20 @@
 # RNN
-"On my honor, I have neither given nor received any unacknowledged aid on this assignment."
+
 ## GENERAL OVERVIEW 
 
 This is the readme for the "RNN.py" file, created by George Barker and Andre Zeromski for CSCI315 Artificial Intelligence with Professor Cody Watson. 
 
 This project is a recurrent neural network (RNN) that functions as a language model.
 
-## Data Manipulation
+## How to run code for Feedforward
+
+
+
+## Feedforward: Part 2
+
+
+
+## Data Manipulation: Part 1
 
 This assignment represents the data preprocessing segment of an RNN. The goal of this segment is to embed words from Reddit comments as floating point vectors. These vectors will later allow the model to apply linear and non-linear transformations on them to predict the next token (word) given the previous word embeddings as context. The model creates these embeddings by tokenizing each word in the input text, because tokens can be more easily and methodologically represented as numerical vectors (as opposed to leaving the input text as strings or one hot encodings). These tokenized words then make up rows of text that are also tokenized and passed to a word2vec method, which embeds these tokenized sentences and words with numerical values. The Word2vec encoding creates a vector space such that words appearing in similar contexts will appear nearby in vector space. It will be useful for our linguistic model to represent words in vector space as we want to capture the meaning of a word in our model, not necessarily a specific word.
 
@@ -18,10 +26,10 @@ Once each row in tokenizeLine's arrayOfLines has been normalized in this way and
 
 Each row in arrayOfLines is then manipulated by adding a 'START' and 'END' token to the beginning and end of each line. We do this because it signals to the encoder--decoder structure of the embedding model when to begin encoding and when to terminate to create the final embedding of the given input sequence. Finally, the model calls wordToVec, which creates a Word2Vec model that is saved after training on these tokenized rows of sentences from arrayOfLines. The Word2Vec model contains a total of 8003 words in its vocabulary (8000 most frequent words, "UNK", "START", and "END") and is what is used to embed our tokenized sentences with numerical meaning.
 
-### How to run the code
-This file can be run in the terminal by opening rnn.py and pressing F5. The outputs of this file are print statements of the tokenized first 10 lines of the .csv with the updated vocabulary. Each tokenized word of the first 10 lines are accompanied by their respective embedded vector with a size of 10. We set the dimensionality of the embedded vectors to 10 because it seemed like a value that would capture the features of each tokenized word without being too large so as to add features where none exist.
-
 ### Sources
+
+"On my honor, I have neither given nor received any unacknowledged aid on this assignment."
+
 https://machinelearningmastery.com/clean-text-machine-learning-python/ <br /> 
 https://machinelearningmastery.com/develop-word-embeddings-python-gensim/ <br /> 
 https://kavita-ganesan.com/gensim-word2vec-tutorial-starter-code/#.XcJOey_MyYV <br />
