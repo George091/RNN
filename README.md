@@ -10,7 +10,7 @@ This project is a recurrent neural network (RNN) that functions as a language mo
 
 Run the python file RNN2.py and the script will load in the tokenized and vectorized data from part 1 using pickle. The data consists of a list with each element being an array of a line which has been tokenized and each word vectorized. The output to running the feedforward on this list will be an array with the word predictions for each word in a line. For simplicity sake we only show the predictions for the first 5 lines. 
 
-If you'd like to load in all data from the scratch you can comment out lines XX and uncomment lines XX. Then run the python file.
+If you'd like to load in all data from the scratch you can comment out lines 164 - 165 and 176 - 177 and uncomment lines 181-184. Then run the python file.
 
 ## Feedforward (part 2)
 
