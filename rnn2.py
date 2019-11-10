@@ -16,7 +16,6 @@ from collections import Counter
 
 
 class RNN:
-
     def __init__(self, Word2VecModel, hidden_dim = 100, bptt_truncate=4):
         # Assign vocabulary parameters
         self.Word2VecModel = Word2VecModel
@@ -45,18 +44,43 @@ class RNN:
             yt = softmax(np.dot(self.V,ht))
             vectorWordIndex = np.argmax(yt)
             to.append(self.vectorVocabulary[vectorWordIndex])
-            print(self.vocabulary[vectorWordIndex])
+#            print(self.vocabulary[vectorWordIndex])
+#            print(self.Word2VecModel.wv.__getitem__(self.vocabulary[vectorWordIndex]))
         return to
 
 def softmax(X):
     exps = np.exp(X)
     return exps / np.sum(exps)
 
-
 class VectorizeData:
-    def __init__(self, data):
+    def __init__(self, model, data):
         """ Given an array of tokenized words returns a Word2Vec model """
-        self.model = Word2Vec(data, size = 10, min_count=1, iter = 5)
+        self.model = model
+        self.x_train = []
+        self.y_train = []
+        self.transform(data)
+        
+    def get_word2vecModel(self):
+        return self.model
+        
+    def get_x_train(self):
+        return self.x_train
+    
+    def get_y_train(self):
+        return self.y_train
+        
+    def transform(self, data):
+        dataVector = []
+        for line in data:
+            vectorLine = self.getNumericFromLine(line)
+            dataVector.append(vectorLine)
+            vectorLine.pop(0)
+            vectorLine.pop()
+            vectorLineCopy = vectorLine.copy()
+            vectorLineCopy.pop()
+            self.x_train.append(vectorLineCopy)
+            vectorLine.pop(0)
+            self.y_train.append(vectorLine)
 
     def getNumericFromWord(self, word):
         """ Changes one word token to a vector """
@@ -131,73 +155,57 @@ class TokenizeData:
         return text
 
 def main():
+    ######## Pickle Load ins ########
+    # Load data
+#    pickle_in = open("data","rb")
+#    data = pickle.load(pickle_in)
+    
+    #Load vectorData
+    pickle_in = open("w2vModel","rb")
+    w2vModel = pickle.load(pickle_in)
+    
+    #Load vectorData
+#    pickle_in = open("vectorData","rb")
+#    vectorData = pickle.load(pickle_in)
+    
+    # Load x_train
+#    pickle_in = open("x_train","rb")
+#    x_train = pickle.load(pickle_in)
+    
+    # Load shortened x_train dataset
+    pickle_in = open("x_trainShort","rb")
+    x_train = pickle.load(pickle_in)
+    
+    ######## MAIN RNN CODE ########
+    
 #    data = TokenizeData().getSentences()
+#    w2vModel = Word2Vec(data, size = 5, min_count=1, iter = 5)
+#    vectorData = VectorizeData(w2vModel, data)
+#    x_train = vectorData.get_x_train()
+    
+    # Passing the first 10 lines into RNN feedforward
+    ourRNN = RNN(w2vModel)
+    for i in range(10):
+        output = ourRNN.feedForward(x_train[i])
+        print("The output for the ", i,"th line is:")
+        print(output)
+        
+    ######## Using pickle to save object to file ########
 #    pickle_out = open("data","wb")
 #    pickle.dump(data, pickle_out)
 #    pickle_out.close()
-#
-#    vdModel = VectorizeData(data)
-#    pickle_out = open("vdModel","wb")
-#    pickle.dump(vdModel, pickle_out)
+#    pickle_out = open("w2vModel","wb")
+#    pickle.dump(w2vModel, pickle_out)
 #    pickle_out.close()
-
-#    # Load the Data
-#    pickle_in = open("data","rb")
-#    data = pickle.load(pickle_in)
-#
-#    # Load the vdModel
-    pickle_in = open("vdModel","rb")
-    vdModel = pickle.load(pickle_in)
-
-#    x_train = []
-#    y_train = []
-#
-#    dataVector = []
-#    for line in data:
-#        vectorLine = vdModel.getNumericFromLine(line)
-#        dataVector.append(vectorLine)
-#        vectorLine.pop(0)
-#        vectorLine.pop()
-#        vectorLineCopy = vectorLine.copy()
-#        vectorLineCopy.pop()
-#        x_train.append(vectorLineCopy)
-#        vectorLine.pop(0)
-#        y_train.append(vectorLine)
-#
+#    pickle_out = open("vectorData","wb")
+#    pickle.dump(vectorData, pickle_out)
+#    pickle_out.close()
 #    pickle_out = open("x_train","wb")
 #    pickle.dump(x_train, pickle_out)
 #    pickle_out.close()
-#    pickle_out = open("y_train","wb")
-#    pickle.dump(y_train, pickle_out)
-#    pickle_out.close()
-
-#    # Load x_train
-#    pickle_in = open("x_train","rb")
-#    x_train = pickle.load(pickle_in)
-#
-#    # Load y_train
-#    pickle_in = open("y_train","rb")
-#    y_train = pickle.load(pickle_in)
-#
 #    pickle_out = open("x_trainShort","wb")
-#    pickle.dump(x_train[:10], pickle_out)
+#    pickle.dump(x_train[:20], pickle_out)
 #    pickle_out.close()
-#    pickle_out = open("y_trainShort","wb")
-#    pickle.dump(y_train[:10], pickle_out)
-#    pickle_out.close()
-
-    # Load x_train
-    pickle_in = open("x_trainShort","rb")
-    x_train = pickle.load(pickle_in)
-
-    # Load y_train
-#    pickle_in = open("y_trainShort","rb")
-#    y_train = pickle.load(pickle_in)
-
-    ourRNN = RNN(vdModel.model)
-    result = ourRNN.feedForward(x_train[1])
-    print(result)
-
 
 if __name__ == "__main__":
     main()
