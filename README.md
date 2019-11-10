@@ -8,13 +8,15 @@ This project is a recurrent neural network (RNN) that functions as a language mo
 
 ## How to run code for Feedforward
 
+Run the python file RNN2.py and the script will load in the tokenized and vectorized data from part 1 using pickle. The data consists of a list with each element being an array of a line which has been tokenized and each word vectorized. The output to running the feedforward on this list will be an array with the word predictions for each word in a line. For simplicity sake we only show the predictions for the first 5 lines. 
 
+If you'd like to load in all data from the scratch you can comment out lines XX and uncomment lines XX. Then run the python file.
 
-## Feedforward: Part 2
+## Feedforward (part 2)
 
+Feedforward takes in a list of vectorized tokens and outputs a list where each element is the model's prediction for the most likely output for the given timestep. 
 
-
-## Data Manipulation: Part 1
+## Data Manipulation (part 1)
 
 This assignment represents the data preprocessing segment of an RNN. The goal of this segment is to embed words from Reddit comments as floating point vectors. These vectors will later allow the model to apply linear and non-linear transformations on them to predict the next token (word) given the previous word embeddings as context. The model creates these embeddings by tokenizing each word in the input text, because tokens can be more easily and methodologically represented as numerical vectors (as opposed to leaving the input text as strings or one hot encodings). These tokenized words then make up rows of text that are also tokenized and passed to a word2vec method, which embeds these tokenized sentences and words with numerical values. The Word2vec encoding creates a vector space such that words appearing in similar contexts will appear nearby in vector space. It will be useful for our linguistic model to represent words in vector space as we want to capture the meaning of a word in our model, not necessarily a specific word.
 
