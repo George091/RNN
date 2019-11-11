@@ -188,7 +188,7 @@ def main():
     ourRNN = RNN(w2vModel)
     for i in range(10):
         output = ourRNN.feedForward(x_train[i])
-        print("The output for the ", i,"th line is:")
+        print("The output for the ", i+1,"th line is:")
         print(output)
         
     ######## Using pickle to save object to file ########
