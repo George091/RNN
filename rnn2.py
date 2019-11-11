@@ -41,6 +41,7 @@ class RNN:
             hp = np.dot(self.W, hp.transpose())
             hiddenSummation = hi + hp
             ht = np.tanh(hiddenSummation)
+            hp = ht
             yt = softmax(np.dot(self.V,ht))
             vectorWordIndex = np.argmax(yt)
             to.append(self.vectorVocabulary[vectorWordIndex])
