@@ -7,14 +7,13 @@ Created on Tue Nov 19 15:45:43 2019
 """
 
 # LSTM for sequence classification in the IMDB dataset
-import numpy
 from keras.datasets import imdb
 from keras.models import Sequential
 from keras.layers import Dense
 from keras.layers import LSTM
 from keras.layers.embeddings import Embedding
 from keras.preprocessing import sequence
-from keras.datasets import imdb
+from keras.layers import Dropout
 
 # load the dataset but only keep the top n words, zero the rest
 top_words = 5000
@@ -27,8 +26,10 @@ X_test = sequence.pad_sequences(X_test, maxlen=max_review_length)
 embedding_vecor_length = 32
 model = Sequential()
 model.add(Embedding(top_words, embedding_vecor_length, input_length=max_review_length))
+model.add(Dropout(0.3))
 model.add(LSTM(100))
-model.add(Dense(1, activation='sigmoid'))
+model.add(Dropout(0.3))
+model.add(Dense(1, activation='tanh'))
 model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
 print(model.summary())
 model.fit(X_train, y_train, epochs=3, batch_size=64)
