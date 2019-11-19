@@ -16,14 +16,14 @@ from keras.preprocessing import sequence
 from keras.layers import Dropout
 
 # load the dataset but only keep the top n words, zero the rest
-top_words = 5000
+top_words = 8000
 (X_train, y_train), (X_test, y_test) = imdb.load_data(num_words=top_words)
 # truncate and pad input sequences
 max_review_length = 500
 X_train = sequence.pad_sequences(X_train, maxlen=max_review_length)
 X_test = sequence.pad_sequences(X_test, maxlen=max_review_length)
 # create the model
-embedding_vecor_length = 32
+embedding_vecor_length = 10
 model = Sequential()
 model.add(Embedding(top_words, embedding_vecor_length, input_length=max_review_length))
 model.add(Dropout(0.3))
