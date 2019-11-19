@@ -1,2 +1,3 @@
-8000 vocabulary
-
+- We limit the RNN to 8000 vocabulary
+	- we can represent 80 - 90% of the dataset taking the most frequent words
+	- 
