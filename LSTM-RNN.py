@@ -16,7 +16,7 @@ import pickle
 # constants
 top_words = 5000
 max_review_length = 600
-embedding_vector_length = 50
+embedding_vector_length = 5
 
 # Load Data
 (x_train, y_train), (x_test, y_test) = imdb.load_data(num_words=top_words)
@@ -36,16 +36,16 @@ model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy']
 print(model.summary())
 
 # Train model
-model.fit(x_train, y_train, epochs=3, batch_size=64)
+model.fit(x_train, y_train, epochs=5, batch_size=64)
 
 # Load the Neural Network
 #pickle_in = open("RNN","rb")
 #model = pickle.load(pickle_in)
 
 # Evaluate model
-predictions = model.evaluate(x_test, y_test, verbose=0)
+predictions = model.evaluate(x_test, y_test)
 print("accuracy: %.2f%%" % (predictions[1]*100))
 
-#pickle_out = open("RNN","wb")
-#pickle.dump(model, pickle_out)
-#pickle_out.close()
+pickle_out = open("RNN2","wb")
+pickle.dump(model, pickle_out)
+pickle_out.close()
