@@ -2,6 +2,7 @@
 	- we can represent 80 - 90% of the dataset taking the most frequent words
 	- 
 
+Why max_review_length of 500 works really well (perhaps sentiment can be obtained,for most reviews, within the first part; provide overall movie impression in the beginning.
 What functions does and how - paragraph
 
 Dropout of .3 means 30% of the time we will be knocking out particular nodes. Dropout goes in between output layer and the previous hidden layer.
