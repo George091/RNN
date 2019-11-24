@@ -10,7 +10,7 @@ from keras.datasets import imdb
 from keras.preprocessing import sequence
 from keras.models import Sequential
 from keras.layers.embeddings import Embedding
-from keras.layers import Dense, Bidirectional, LSTM, GlobalMaxPool1D, Dropout
+from keras.layers import Dense, Bidirectional, LSTM, Dropout
 import pickle
 
 # constants
@@ -36,7 +36,7 @@ model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy']
 print(model.summary())
 
 # Train model
-model.fit(x_train, y_train, epochs=5, batch_size=64)
+model.fit(x_train, y_train, epochs=4, batch_size=64)
 
 # Load the Neural Network
 #pickle_in = open("RNN","rb")
@@ -46,6 +46,6 @@ model.fit(x_train, y_train, epochs=5, batch_size=64)
 predictions = model.evaluate(x_test, y_test)
 print("accuracy: %.2f%%" % (predictions[1]*100))
 
-pickle_out = open("RNN2","wb")
+pickle_out = open("RNN-final-1","wb")
 pickle.dump(model, pickle_out)
 pickle_out.close()
