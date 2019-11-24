@@ -33,19 +33,21 @@ model.add(Dropout(0.3))
 model.add(Dense(64, activation="relu"))
 model.add(Dense(1, activation="sigmoid"))
 model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
+
+# Load RNN from pickle
+pickle_in = open("RNN-final","rb")
+model = pickle.load(pickle_in)
+
+# Summary of model
 print(model.summary())
 
 # Train model
-model.fit(x_train, y_train, epochs=4, batch_size=64)
-
-# Load the Neural Network
-#pickle_in = open("RNN","rb")
-#model = pickle.load(pickle_in)
+#model.fit(x_train, y_train, epochs=4, batch_size=64)
 
 # Evaluate model
 predictions = model.evaluate(x_test, y_test)
 print("accuracy: %.2f%%" % (predictions[1]*100))
 
-pickle_out = open("RNN-final-1","wb")
-pickle.dump(model, pickle_out)
-pickle_out.close()
+#pickle_out = open("RNN-final-1","wb")
+#pickle.dump(model, pickle_out)
+#pickle_out.close()

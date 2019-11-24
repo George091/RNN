@@ -5,42 +5,50 @@ Created on Thu Nov 21 20:03:08 2019
 
 @author: georgebarker andrezeromski
 """
-from __future__ import absolute_import, division, print_function, unicode_literals
 
-import tensorflow_datasets as tfds
-import tensorflow as tf
-  
-dataset, info = tfds.load('imdb_reviews/subwords8k', with_info=True,
-                          as_supervised=True)
+from keras.datasets import imdb
+from keras.preprocessing import sequence
+from keras.models import Sequential
+from keras.layers.embeddings import Embedding
+from keras.layers import Dense, Bidirectional, LSTM, Dropout
+import pickle
 
-train_dataset, test_dataset = dataset['train'], dataset['test']
+# constants
+top_words = 5000
+max_review_length = 600
+embedding_vector_length = 5
 
-encoder = info.features['text'].encoder
-  
-BUFFER_SIZE = 10000
-BATCH_SIZE = 64
-train_dataset = train_dataset.shuffle(BUFFER_SIZE)
-train_dataset = train_dataset.padded_batch(BATCH_SIZE, train_dataset.output_shapes)
+# Load Data
+(x_train, y_train), (x_test, y_test) = imdb.load_data(num_words=top_words)
 
-test_dataset = test_dataset.padded_batch(BATCH_SIZE, test_dataset.output_shapes)
+# Pad and reduce length of input
+x_train = sequence.pad_sequences(x_train, maxlen=max_review_length)
+x_test = sequence.pad_sequences(x_test, maxlen=max_review_length)
 
-model = tf.keras.Sequential([
-tf.keras.layers.Embedding(encoder.vocab_size, 64),
-tf.keras.layers.Bidirectional(tf.keras.layers.LSTM(64, dropout=.3, return_sequences=True)),
-tf.keras.layers.Bidirectional(tf.keras.layers.LSTM(32)),
-tf.keras.layers.Dense(64, activation='relu'),
-tf.keras.layers.Dense(1, activation='sigmoid')
-])
-    
-model.compile(loss='binary_crossentropy',
-              optimizer=tf.keras.optimizers.Adam(1e-4),
-              metrics=['accuracy'])
+# Create model
+model = Sequential()
+model.add(Embedding(top_words, embedding_vector_length, input_length=max_review_length))
+model.add(Bidirectional(LSTM(32, return_sequences=True)))
+model.add(Bidirectional(LSTM(64)))
+model.add(Dropout(0.3))
+model.add(Dense(64, activation="relu"))
+model.add(Dense(1, activation="sigmoid"))
+model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
 
-history = model.fit(train_dataset, epochs=10,
-                    validation_data=test_dataset, 
-                    validation_steps=30)
+## Load RNN from pickle
+pickle_in = open("RNN-DEEP-final","rb")
+model = pickle.load(pickle_in)
 
-test_loss, test_acc = model.evaluate(test_dataset)
+# Summary of model
+print(model.summary())
 
-print('Test Loss: {}'.format(test_loss))
-print('Test Accuracy: {}'.format(test_acc))
+# Train model
+#model.fit(x_train, y_train, epochs=4, batch_size=64)
+
+# Evaluate model
+predictions = model.evaluate(x_test, y_test)
+print("accuracy: %.2f%%" % (predictions[1]*100))
+
+#pickle_out = open("RNN-DEEP-final-1","wb")
+#pickle.dump(model, pickle_out)
+#pickle_out.close()
