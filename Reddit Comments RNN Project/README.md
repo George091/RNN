@@ -1,6 +1,6 @@
 # Recurrent Neural Network (RNN)
 
-This is the readme for the "RNN.py" file, created by George Barker and Andre Zeromski. This file is used to preprocess data and perform feedforward for a RNN language model. This was done from scratch without TensorFlow.
+This is the readme for the "RNN.py" file, created by George Barker and Andre Zeromski. This file is used to preprocess data and perform feedforward for a RNN language model of Reddit comments. This was done from scratch without TensorFlow.
 
 ## How to run code for Feedforward
 
