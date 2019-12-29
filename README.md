@@ -38,14 +38,14 @@ Overall there are some limitations with an RNN model for sentiment analysis. An 
 
 ## Sources:
 
-https://keras.io/datasets/
-https://simple.wikipedia.org/wiki/Zipf%27s_law
-https://keras.io/models/model/
-https://ml-cheatsheet.readthedocs.io/en/latest/loss_functions.html
-https://en.wikipedia.org/wiki/Occam%27s_razor
-https://machinelearningmastery.com/stacked-long-short-term-memory-networks/
-https://www.tensorflow.org/tutorials/text/text_classification_rnn
-https://machinelearningmastery.com/predict-sentiment-movie-reviews-using-deep-learning/
-https://towardsdatascience.com/a-beginners-guide-on-sentiment-analysis-with-rnn-9e100627c02e
-https://stackoverflow.com/questions/43035827/whats-the-difference-between-a-bidirectional-lstm-and-an-lstm
-https://arxiv.org/abs/1311.0701
+https://keras.io/datasets/ <br />
+https://simple.wikipedia.org/wiki/Zipf%27s_law <br />
+https://keras.io/models/model/ <br />
+https://ml-cheatsheet.readthedocs.io/en/latest/loss_functions.html <br />
+https://en.wikipedia.org/wiki/Occam%27s_razor <br />
+https://machinelearningmastery.com/stacked-long-short-term-memory-networks/ <br />
+https://www.tensorflow.org/tutorials/text/text_classification_rnn <br />
+https://machinelearningmastery.com/predict-sentiment-movie-reviews-using-deep-learning/ <br />
+https://towardsdatascience.com/a-beginners-guide-on-sentiment-analysis-with-rnn-9e100627c02e <br />
+https://stackoverflow.com/questions/43035827/whats-the-difference-between-a-bidirectional-lstm-and-an-lstm <br />
+https://arxiv.org/abs/1311.0701 <br />
