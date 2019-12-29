@@ -1,6 +1,10 @@
+# Recurrent Neural Network (RNN)
+
 This is the README for the Recurrent Neural Network (RNN) Full Implementation assignment by George Barker and Andre Zeromski. We created a RNN model that classifies IMDB movie reviews as positive or negative with 87.7% accuracy.
 
-How to run code: To test the trained model, run the file “LSTM-RNN.py”. The result of testing will be printed. To train the model yourself, comment out line 38 and 39 (pickling in the model) and uncomment line 45 (training the model). For the stacked LSTM, to test the trained model, run the file “Deep-LSTM-RNN.py”. The result of testing will be printed. To train the model yourself, comment out line 39 and 40 (pickling in the model) and uncomment line 46 (training the model). 
+## How to run code:
+
+To test the trained model, run the file “LSTM-RNN.py”. The result of testing will be printed. To train the model yourself, comment out line 38 and 39 (pickling in the model) and uncomment line 45 (training the model). For the stacked LSTM, to test the trained model, run the file “Deep-LSTM-RNN.py”. The result of testing will be printed. To train the model yourself, comment out line 39 and 40 (pickling in the model) and uncomment line 46 (training the model). 
 
 We imported the IMDB movie reviews dataset with “from Keras.datasets import imdb” and the function imdb.load_data(num_words=None). This returns (x_train, y_train), (x_test, y_test) for the IMDB reviews with each word replaced by the integer frequency that the word occurs in the whole of the training set. Each review is therefore a sequence of words represented as integers. Each review has a y value of 0 or 1, corresponding to whether the review is negative or positive. The train data and test data is split 50 / 50, so our train data has 25,000 reviews and the test data has 25,000 reviews. The num_words parameter allows us to specify the amount of words we’d like to keep in the vocabulary, so only the top “num_words” are kept. This is beneficial as it allows us to reduce our vocabulary.
 
@@ -32,7 +36,8 @@ The other factor of using a stacked LSTM is that the model has significantly mor
 
 Overall there are some limitations with an RNN model for sentiment analysis. An RNN is limited by its sequential nature of feature extraction. An LSTM is going to keep track of the global order of features. In something such as movie reviews, the review may jump around when describing the attributes of a movie. The global order may not be the most important feature. Instead, an alternative strategy that may be promising for future work would be to use a CNN to model the text data for sentiment analysis. A CNN may be another beneficial model in extracting data and may allow the accuracy to be further increased as it is not limited by the temporal relationships in data such as that of an RNN.
 
-Sources:
+## Sources:
+
 https://keras.io/datasets/
 https://simple.wikipedia.org/wiki/Zipf%27s_law
 https://keras.io/models/model/
